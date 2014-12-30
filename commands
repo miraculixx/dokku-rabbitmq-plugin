@@ -66,8 +66,8 @@ case "$1" in
     fi
     # Generate random password for users
     RABBITMQ_PASSWORD=$(< /dev/urandom tr -dc A-Za-z0-9 | head -c 16)
-    echo $RABBITMQ_PASSWORD > "$HOST_DIR/pwd"
-    chmod 600 "$HOST_DIR/pwd"
+    echo $RABBITMQ_PASSWORD > "$HOST_DIR/credentials"
+    chmod 600 "$HOST_DIR/credentials"
     # Stop existing container with the same persistent Rabbitmq
     ID=$(docker ps | grep "$CONTAINER_NAME" |  awk '{print $1}')
     if [[ ! -z "$ID" ]]; then
@@ -138,7 +138,6 @@ case "$1" in
         fi
 
         dokku link:delete "$APP" "$CONTAINER_NAME" "$PLUGIN_ALIAS"
-        dokku config:unset "$APP" "BROKER_SCHEME" "BROKER_USERNAME" "BROKER_PASSWORD" "BROKER_PATH" "BROKER_HOST" "BROKER_AMQP_PORT" "BROKER_ADMIN_PORT" "BROKER_URL"
         dokku config:unset $APP "RABBITMQ_SCHEME" "RABBITMQ_USERNAME" "RABBITMQ_PASSWORD" "RABBITMQ_PATH" "RABBITMQ_HOST" "RABBITMQ_AMQP_PORT" "RABBITMQ_ADMIN_PORT" "RABBITMQ_URL"
 
         # Remove persistent volume
@@ -176,13 +175,13 @@ case "$1" in
             echo "You must specify a container name"
             exit 1
         fi
-        if [[ ! -f "$HOST_DIR/pwd" ]]; then
+        if [[ ! -f "$HOST_DIR/credentials" ]]; then
             echo "Rabbitmq is not correctly initialized"
             exit 0
         fi
         ID=$(docker ps -a | grep "$CONTAINER_NAME" |  awk '{print $1}')
         #IP=$(docker inspect $ID | grep IPAddress | awk '{ print $2 }' | tr -d ',"')
-        RABBITMQ_PASSWORD=$(cat "$HOST_DIR/pwd")
+        RABBITMQ_PASSWORD=$(cat "$HOST_DIR/credentials")
 
         dokku link:create "$APP" "$CONTAINER_NAME" "$PLUGIN_ALIAS"
         # Write config to app's ENV file using dokku command
