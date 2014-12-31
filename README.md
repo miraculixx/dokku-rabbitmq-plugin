@@ -3,7 +3,7 @@ RabbitMQ plugin for Dokku
 
 Project: https://github.com/progrium/dokku
 
-** development version not backwards compatible **
+**development version NOT backwards compatible**
 
 Requirements
 ------------
