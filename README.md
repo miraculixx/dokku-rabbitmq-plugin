@@ -3,6 +3,8 @@ RabbitMQ plugin for Dokku
 
 Project: https://github.com/progrium/dokku
 
+** development version not backwards compatible **
+
 Requirements
 ------------
 * Docker version `0.7.2` or higher
